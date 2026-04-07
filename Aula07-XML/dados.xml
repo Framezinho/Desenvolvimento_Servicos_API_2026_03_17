@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pessoa>
+    <nome>Maria</nome>
+    <idade>25</idade>
+    <altura>1.76</altura>
+    <cpf>000.111.222-33</cpf>
+    <conjuge>
+        <nome>João</nome>
+        <idade>26</idade>
+    </conjuge>
+    <filhos>
+        <filho>
+            <nome>Júlia</nome>
+            <idade>5</idade>
+        </filho>
+        <filho>
+            <nome>Pedro</nome>
+            <idade>3</idade>
+            <altura>0.75</altura>
+        </filho>
+    </filhos>
+</pessoa>
