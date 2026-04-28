@@ -1,68 +1,65 @@
 <?php
-    header( "Content-type: application/json" ); 
-    $local = "localhost" ;
-    $user = "root";
-    $password = "";
-    $banco = "loja_25_2";
+header("Content-Type: application/json");
 
-    if(isset( $_REQUEST['buscar'] ) ){
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "loja_26_1";
 
-        $conn = mysqli_connect($local, $user, $password, $banco);
-        if( $conn ){
-            $query = "SELECT * FROM produto ORDER BY nome";
-            $result = mysqli_query($conn, $query);
-            $linhas = array();
-            while( $row = mysqli_fetch_assoc($result) ){
-                $linhas[] = $row;
-            }
-            mysqli_close($conn);
-            echo '{ "produtos" : '.json_encode($linhas).' }';
-        }
+$conn = new mysqli($host, $user, $pass, $db);
 
+if ($conn->connect_error) {
+    echo json_encode(["erro" => "Falha na conexão: " . $conn->connect_error]);
+    exit;
+}
+
+// BUSCAR produtos
+if (isset($_GET['buscar'])) {
+    $result = $conn->query("SELECT * FROM produto");
+    $produtos = [];
+    while ($row = $result->fetch_assoc()) {
+        $produtos[] = $row;
+    }
+    echo json_encode(["produtos" => $produtos]);
+}
+
+// EXCLUIR produto
+elseif (isset($_GET['excluir']) && isset($_GET['idProduto'])) {
+    $id = intval($_GET['idProduto']);
+    $stmt = $conn->prepare("DELETE FROM produto WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        echo json_encode(["resposta" => "Produto excluído com sucesso!"]);
+    } else {
+        echo json_encode(["resposta" => "Erro ao excluir: " . $conn->error]);
+    }
+}
+
+// INSERIR produto
+elseif (isset($_GET['inserir'])) {
+    $nome  = $conn->real_escape_string($_POST['name'] ?? '');
+    $preco = floatval($_POST['price'] ?? 0);
+
+    if (empty($nome) || $preco <= 0) {
+        echo json_encode(["resposta" => "Nome e preço são obrigatórios."]);
+        exit;
     }
 
-    if(isset( $_REQUEST['excluir'] ) ){
-
-        $conn = mysqli_connect($local, $user, $password, $banco);
-        if( $conn ){
-
-            $idProd = $_GET["idProduto"];
-
-            $query = "DELETE FROM produto WHERE id = $idProd";
-            mysqli_query($conn, $query);
-            mysqli_close($conn);
-            echo '{ "resposta" : "Produto excluído com sucesso!" }';
-        } 
-
+    $stmt = $conn->prepare("INSERT INTO produto (nome, preco) VALUES (?, ?)");
+    $stmt->bind_param("sd", $nome, $preco);
+    if ($stmt->execute()) {
+        echo json_encode([
+            "resposta" => "Produto inserido com sucesso!",
+            "id" => $conn->insert_id
+        ]);
+    } else {
+        echo json_encode(["resposta" => "Erro ao inserir: " . $conn->error]);
     }
+}
 
-    if(isset( $_REQUEST['inserir'] ) ){
+else {
+    echo json_encode(["erro" => "Ação não reconhecida."]);
+}
 
-        $nome = $_POST["name"];
-        $preco = $_POST["price"];
-
-        $preco = str_replace( "," , ".", $preco);
-        if( $preco == "" ) 
-            $preco = 0.0;
-
-        try{
-            $conn = mysqli_connect($local, $user, $password, $banco);
-            if( $conn ){
-                $query = "INSERT INTO produto (nome, preco) VALUES ( '$nome' , $preco ) ";
-                mysqli_query($conn, $query);
-                $id = mysqli_insert_id( $conn );
-                mysqli_close($conn);
-                if( $id > 0 )
-                    echo '{ "resposta" : "Produto inserido com sucesso" , "id" : '.$id.' }';
-                else
-                    echo '{ "resposta" : "Erro ao tentar inserir" }';
-            }else
-                echo '{ "resposta" : "Erro ao tentar conectar" }';
-            
-        }catch( \Throwable $th ){
-            echo '{ "resposta" : "Erro ao tentar conectar" }';
-        }
-        
-    }
-
-    
+$conn->close();
+?>
