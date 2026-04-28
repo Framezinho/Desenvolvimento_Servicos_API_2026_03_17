@@ -1,36 +1,36 @@
 function lerXML(){
-    const req = new XMLHttpRequest()
+    var req = new XMLHttpRequest();
     req.onreadystatechange = function(){
-        if( this.readyState == 4 && this.status == 200){
-            const dadosXML = this.responseXML
-            const divDados = document.getElementById("divDados")
-            divDados.innerHTML = this.responseText + "<hr>"
-            const cpfs = dadosXML.getElementsByTagName("cpf")
-            const cpf = cpfs[0].childNodes[0].nodeValue
-            
-            const nome = dadosXML.getElementsByTagName("nome")[0].childNodes[0].nodeValue
-            divDados.innerHTML += "Nome: " + nome
-            divDados.innerHTML += "<br>CPF: " + cpf
-            const conjuge = dadosXML.getElementsByTagName("conjuge")
-            const nomeConjuge = conjuge[0].getElementsByTagName("nome")[0].childNodes[0].nodeValue
-            const idadeConjuge = conjuge[0].getElementsByTagName("idade")[0].childNodes[0].nodeValue
-            divDados.innerHTML += "<br> Conjuge: " + nomeConjuge + " - Idade: " + idadeConjuge
-            const objFilhos = dadosXML.getElementsByTagName("filhos")
-            const filhos = objFilhos[0].getElementsByTagName("filho")
-            divDados.innerHTML += "<br>Filhos: "
-            for ( i = 0; i < filhos.length ; i++) {
-                nomeFilho = filhos[i].getElementsByTagName("nome")[0].childNodes[0].nodeValue
-                idadeFilho = filhos[i].getElementsByTagName("idade")[0].childNodes[0].nodeValue
-                divDados.innerHTML += "<br>" + nomeFilho + " - Idade: " + idadeFilho
-
-                objAltura = filhos[i].getElementsByTagName("altura")
-                if( objAltura.length > 0 ){
-                    alturaFilho = objAltura[0].childNodes[0].nodeValue
-                    divDados.innerHTML += " - Altura: " + alturaFilho
+        if( this.readyState == 4 && this.status == 200 ){
+            var dadosXML = this.responseXML;
+            var pessoa = dadosXML.getElementsByTagName("pessoa");
+            var tagNome = pessoa[0].getElementsByTagName("nome");
+            var nome = tagNome[0].childNodes[0].nodeValue;
+            var idade = pessoa[0].getElementsByTagName("idade")[0].childNodes[0].nodeValue;
+            var tagFormacoes = pessoa[0].getElementsByTagName("formacoes");
+            var tagsFormacao = tagFormacoes[0].getElementsByTagName("formacao");
+            var conteudo = "Nome: " + nome + "<br>Idade: " + idade + "<br>Formações: "
+            for( i = 0; i < tagsFormacao.length; i++){
+                conteudo += tagsFormacao[i].childNodes[0].nodeValue + " - ";
+            }
+            conteudo += "<br>Filhos: "
+            var tagsFilho = pessoa[0].getElementsByTagName("filhos")[0]
+                .getElementsByTagName("filho");
+            if( tagsFilho.length == 0 ){
+                conteudo += "Não possui filhos";
+            }else{
+                for( i = 0; i < tagsFilho.length; i++){
+                    conteudo += "<br>Nome: "
+                    conteudo += tagsFilho[i].getElementsByTagName("nome")[0]
+                        .childNodes[0].nodeValue;
+                    conteudo += " - Idade: "
+                    conteudo += tagsFilho[i].getElementsByTagName("idade")[0]
+                        .childNodes[0].nodeValue;
                 }
             }
+            document.getElementById("conteudo").innerHTML = conteudo;
         }
     }
-    req.open("GET", "dados.xml")
+    req.open("GET", "dados.xml" , true);
     req.send()
 }
