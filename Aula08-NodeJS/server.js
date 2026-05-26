@@ -8,7 +8,7 @@ const conn = mysql.createConnection( {
     host : hostname ,
     user : "root" ,
     password : "" ,
-    database : "loja_26_2" 
+    database : "loja_26_1" 
 } )
 
 const server = http.createServer( (req, res) =>{
