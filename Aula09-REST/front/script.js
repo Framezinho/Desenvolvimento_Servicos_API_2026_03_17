@@ -1,0 +1,8 @@
+function loadCategorias() {
+
+ }
+
+ 
+ function loadProdutos() {
+
+ }
