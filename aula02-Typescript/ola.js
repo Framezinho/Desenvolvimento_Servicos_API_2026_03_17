@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 let idade = 25;
 let nome = "João";
 let casado = true;
@@ -41,3 +42,17 @@ console.log(concatenar("2", "7"));
 let codigo;
 codigo = 1;
 codigo = "1";
+//let turno : string = "Manhã"
+//let MANHA : string = "Manhã"
+//let TARDE : string = "Tarde"
+var Turno;
+(function (Turno) {
+    Turno[Turno["MANHA"] = 0] = "MANHA";
+    Turno[Turno["TARDE"] = 1] = "TARDE";
+    Turno[Turno["NOITE"] = 2] = "NOITE";
+})(Turno || (Turno = {}));
+let turno = Turno.MANHA;
+// if( turno == Turno.NOITE ){
+// }else{
+// }
+//# sourceMappingURL=ola.js.map
