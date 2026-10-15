@@ -1,11 +1,16 @@
 
 
 abstract class Pessoa{
-    nome : string;
-    fone : string;
+    public nome : string;
+    public fone : string;
+    private id : number;
+    protected endereco: string | null;
+
     constructor(nome: string, fone:string){
+        this.id = 0;
         this.nome = nome;
         this.fone = fone;
+        this.endereco = null;
     }
     imprimir():void{
         console.log(`Nome: ${this.nome}\nTelefone: ${this.fone}`)
@@ -17,8 +22,14 @@ abstract class Pessoa{
 class Juridica extends Pessoa{
     cnpj : string;
     constructor(name: string, fone: string, cnpj: string){
-        super(name, fone)
-        this.cnpj = cnpj
+        super(name, fone);
+        this.cnpj = cnpj;
+        this.endereco = "";
+    }
+    imprimir(): void {
+        super.imprimir()
+        console.log(`CNPJ: ${this.cnpj}`)
+        console.log(`Endereço: ${this.endereco}`)
     }
     cadastrar(): void{
         console.log( 'Pessoa Jurídica cadastrada com sucesso!' );
@@ -27,10 +38,33 @@ class Juridica extends Pessoa{
 
 class Fisica extends Pessoa{
     cpf : string;
-    constructor(name: string, fone: string, cpf: string){
-        super(name, fone)
-        this.cpf = cpf
+    private _idade : number;
+
+    constructor(name: string, fone: string, cpf: string, idade : number){
+        super(name, fone);
+        this.cpf = cpf;
+        idade >= 0 ? this._idade = idade : this._idade = 0;
     }
+
+    // // Método modificador, SET
+    // setIdade( idade : number ): void{
+    //     idade >= 0 ? this.idade = idade : console.log("Valor não permitido!");
+
+    // }
+
+    // // Método acessor, GET
+    // getIdade( ): number{
+    //     return this.idade;
+    // }
+
+    get idade():number{
+         return this.idade;
+    }
+
+    set idade( idade : number ){
+         idade >= 0 ? this._idade = idade : console.log("Valor não permitido!");
+    }
+
     imprimir(): void {
         super.imprimir()
         console.log(`CPF: ${this.cpf}`)
@@ -46,7 +80,8 @@ class Fisica extends Pessoa{
     }
 }
 
-const pf = new Fisica("Maria Inês" , "(51)3344-5566", "000.111.222-33");
+const pf = new Fisica("Maria Inês" , "(51)3344-5566", "000.111.222-33" , -8 );
+pf.idade = -1
 pf.cadastrar()
 pf.imprimir()
 
